@@ -1,5 +1,38 @@
+# ----------------------------------------------------------------
 # Virtual Environment
+#
+# Ignores the entire 'venv' folder, which contains all the 
+# installed Python packages and environment configuration.
+# This should never be shared or committed.
+# ----------------------------------------------------------------
 venv/
 
+
+# ----------------------------------------------------------------
 # Python Cache
+#
+# Ignores the '__pycache__' folders and all compiled '.pyc' 
+# files that Python creates automatically. These are machine-specific
+# and will be regenerated as needed.
+# ----------------------------------------------------------------
 __pycache__/
+*.pyc
+
+
+# ----------------------------------------------------------------
+# IDE / Editor-specific files (Optional but good practice)
+#
+# Ignores configuration folders for common code editors like
+# Visual Studio Code, PyCharm, etc.
+# ----------------------------------------------------------------
+.vscode/
+.idea/
+
+
+# ----------------------------------------------------------------
+# OS-specific files (Optional but good practice)
+#
+# Ignores system files created by macOS, Windows, or Linux.
+# ----------------------------------------------------------------
+.DS_Store
+Thumbs.db
