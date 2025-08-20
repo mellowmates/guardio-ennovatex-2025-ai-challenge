@@ -1,60 +1,73 @@
-# src/agents/movement_agent.py
 import time
 import math
 import numpy as np
 from pynput import mouse
 
 class MovementAgent:
-    def __init__(self, anomaly_queue):
+    def __init__(self, anomaly_queue, alpha=0.01):
         self.anomaly_queue = anomaly_queue
         self.positions = []
-        self.is_learning = True
-        self.learned_profile = {"mean_speed": 0, "std_dev_speed": 0}
         self.listener = mouse.Listener(on_move=self._on_move)
+        self.mean_speed = None
+        self.var_speed = None
+        self.count = 0
+        self.alpha = alpha  # Learning rate for adaptation
+
+    def update_profile(self, speed):
+        """Continuously updates the behavioral profile using exponential moving averages"""
+        if self.mean_speed is None:
+            self.mean_speed = speed
+            self.var_speed = 0
+            self.count = 1
+        else:
+            self.count += 1
+            delta = speed - self.mean_speed
+            self.mean_speed += self.alpha * delta
+            self.var_speed = (1 - self.alpha) * self.var_speed + self.alpha * (delta ** 2)
+
+    def std_speed(self):
+        """Returns current standard deviation of speeds"""
+        if self.var_speed is None:
+            return 0
+        return self.var_speed ** 0.5
 
     def _on_move(self, x, y):
-        self.positions.append({'x': x, 'y': y, 'time': time.time()})
-        if len(self.positions) > 200: self.positions.pop(0)
-        if not self.is_learning: self._detect_anomaly()
+        """Handles mouse movement events"""
+        t = time.time()
+        self.positions.append({'x': x, 'y': y, 'time': t})
+        if len(self.positions) > 200:
+            self.positions.pop(0)
+        self.detect_anomaly()
 
-    def _calculate_speeds(self):
-        speeds = []
-        if len(self.positions) < 2: return speeds
-        for i in range(1, len(self.positions)):
-            p1, p2 = self.positions[i-1], self.positions[i]
-            distance = math.sqrt((p2['x'] - p1['x'])**2 + (p2['y'] - p1['y'])**2)
-            time_diff = p2['time'] - p1['time']
-            if time_diff > 0.001: speeds.append(distance / time_diff)
-        return speeds
+    def compute_speed(self):
+        """Calculates current mouse movement speed"""
+        if len(self.positions) < 2:
+            return None
+        p1, p2 = self.positions[-2], self.positions[-1]
+        dist = math.sqrt((p2['x'] - p1['x'])**2 + (p2['y'] - p1['y'])**2)
+        dt = p2['time'] - p1['time']
+        if dt <= 0:
+            return None
+        return dist / dt
 
-    def _learn_profile(self):
-        print("[MovementAgent] Learning normal mouse movement for 90 seconds...")
-        time.sleep(90) # <-- UPDATED
-        speeds = self._calculate_speeds()
-        if len(speeds) > 10:
-            self.learned_profile["mean_speed"] = np.mean(speeds)
-            self.learned_profile["std_dev_speed"] = np.std(speeds)
-        self.is_learning = False
-        self.positions = []
-
-    def _detect_anomaly(self):
-        speeds = self._calculate_speeds()
-        if not speeds or self.learned_profile["std_dev_speed"] == 0: return
-        last_speed = speeds[-1]
-        mean = self.learned_profile["mean_speed"]
-        std_dev = self.learned_profile["std_dev_speed"]
-
-        if last_speed < 0.1:
+    def detect_anomaly(self):
+        """Detects movement anomalies and continuously updates profile"""
+        speed = self.compute_speed()
+        if speed is None or speed < 0.1:
             return
-
-        if abs(last_speed - mean) > 3 * std_dev:
-            self.anomaly_queue.put(f"[ALERT] Movement Anomaly: Unusually high mouse speed detected ({last_speed:.2f}).")
+        
+        # Detect anomaly only if we have enough data
+        if self.mean_speed is not None and self.std_speed() > 0 and self.count > 10:
+            if abs(speed - self.mean_speed) > 3 * self.std_speed():
+                severity = "High" if abs(speed - self.mean_speed) > 5 * self.std_speed() else "Medium"
+                self.anomaly_queue.put(f"[ALERT] Movement Anomaly ({severity}): Speed {speed:.1f} vs normal {self.mean_speed:.1f}")
+        
+        # Always update profile for continuous learning
+        self.update_profile(speed)
 
     def run(self, stop_event):
         self.listener.start()
-        self._learn_profile()
-        print(f"[{self.__class__.__name__}] Now monitoring...")
-        while not stop_event.is_set():
-            time.sleep(0.5)
+        print("[MovementAgent] Starting adaptive monitoring...")
+        stop_event.wait()
         self.listener.stop()
-        print(f"[{self.__class__.__name__}] has stopped.")
+        print("[MovementAgent] Stopped.")
