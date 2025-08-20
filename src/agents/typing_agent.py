@@ -1,4 +1,4 @@
-# agents/typing_agent.py
+# src/agents/typing_agent.py
 import time
 import numpy as np
 from pynput import keyboard
@@ -16,36 +16,30 @@ class TypingAgent:
         current_time = time.time()
         delay = current_time - self.last_press_time
         self.last_press_time = current_time
-        if 0.01 < delay < 2.0:
-            self.key_press_times.append(delay)
-        if len(self.key_press_times) > 500:
-            self.key_press_times.pop(0)
-        if not self.is_learning:
-            self._detect_anomaly(delay)
+        if 0.01 < delay < 2.0: self.key_press_times.append(delay)
+        if len(self.key_press_times) > 500: self.key_press_times.pop(0)
+        if not self.is_learning: self._detect_anomaly(delay)
 
     def _learn_profile(self):
-        print("[TypingAgent] Learning normal typing rhythm for 30 seconds...")
-        time.sleep(30)
+        print("[TypingAgent] Learning normal typing rhythm for 90 seconds...")
+        time.sleep(90) # <-- UPDATED
         if len(self.key_press_times) > 10:
             self.learned_profile["mean_delay"] = np.mean(self.key_press_times)
             self.learned_profile["std_dev_delay"] = np.std(self.key_press_times)
-            print(f"[TypingAgent] Learning complete. Mean delay: {self.learned_profile['mean_delay']*1000:.2f} ms")
-        else:
-            print("[TypingAgent] Not enough typing to create a profile. Please type naturally.")
         self.is_learning = False
         self.key_press_times = []
 
     def _detect_anomaly(self, current_delay):
-        if not self.learned_profile["std_dev_delay"] or not (0.01 < current_delay < 2.0):
-            return
-        mean = self.learned_profile["mean_delay"]
-        std_dev = self.learned_profile["std_dev_delay"]
+        if self.learned_profile["std_dev_delay"] == 0: return
+        mean, std_dev = self.learned_profile["mean_delay"], self.learned_profile["std_dev_delay"]
         if abs(current_delay - mean) > 3 * std_dev:
-            report = f"[ALERT] Typing Anomaly: Unusual typing rhythm detected ({current_delay*1000:.2f} ms)."
-            self.anomaly_queue.put(report)
+            self.anomaly_queue.put(f"[ALERT] Typing Anomaly: Unusual typing rhythm detected.")
 
-    def run(self):
+    def run(self, stop_event):
         self.listener.start()
         self._learn_profile()
-        print("[TypingAgent] Now monitoring for anomalies...")
-
+        print(f"[{self.__class__.__name__}] Now monitoring...")
+        while not stop_event.is_set():
+            time.sleep(0.5)
+        self.listener.stop()
+        print(f"[{self.__class__.__name__}] has stopped.")

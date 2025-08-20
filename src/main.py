@@ -1,55 +1,83 @@
-# main.py
+# src/main.py
 import queue
 import threading
-import time
-from agents.movement_agent import MovementAgent
-from agents.typing_agent import TypingAgent
-from agents.app_usage_agent import AppUsageAgent
+import tkinter as tk
+from agents import MovementAgent, TypingAgent, AppUsageAgent
+from dashboard import GuardioDashboard
+
+class GuardioApp:
+    def __init__(self, root: GuardioDashboard):
+        self.root = root
+        self.anomaly_queue = queue.Queue()
+        self.risk_score = 0
+        self.agent_threads = []
+        self.stop_event = None
+
+        self.root.start_button.config(command=self.start_monitoring)
+        self.root.reset_button.config(command=self.reset_monitoring)
+        self.root.clear_button.config(command=self.root._clear_log)
+
+    def start_monitoring(self):
+        self.root.start_button.config(state=tk.DISABLED)
+        self.root.reset_button.config(state=tk.DISABLED)
+        self.root.set_state("Monitoring")  # No learning phase - immediate monitoring
+        self.root.add_log_message("[System] Starting adaptive monitoring agents...")
+
+        self.stop_event = threading.Event()
+        agents = [MovementAgent(self.anomaly_queue), TypingAgent(self.anomaly_queue), AppUsageAgent(self.anomaly_queue)]
+        
+        for agent in agents:
+            thread = threading.Thread(target=agent.run, args=(self.stop_event,), daemon=True)
+            thread.start()
+            self.agent_threads.append(thread)
+
+        self.process_queue()
+        self.root.after(2000, lambda: self.root.reset_button.config(state=tk.NORMAL) if self.stop_event and not self.stop_event.is_set() else None)
+
+    def stop_monitoring(self):
+        if self.stop_event:
+            self.root.add_log_message("[System] Stopping all agents...")
+            self.stop_event.set()
+            for thread in self.agent_threads:
+                thread.join(timeout=1.0)
+            self.agent_threads = []
+            self.stop_event = None
+            self.root.set_state("Stopped")
+            self.root.start_button.config(state=tk.NORMAL)
+            self.root.reset_button.config(state=tk.DISABLED)
+
+    def reset_monitoring(self):
+        self.root.reset_button.config(state=tk.DISABLED)
+        self.stop_monitoring()
+        self.risk_score = 0
+        self.root.update_risk_score(self.risk_score)
+        self.root._clear_log()
+        self.start_monitoring()
+
+    def process_queue(self):
+        try:
+            while True:
+                message = self.anomaly_queue.get_nowait()
+                # Enhanced scoring based on severity
+                if "High" in message:
+                    self.risk_score += 3
+                elif "Medium" in message:
+                    self.risk_score += 2
+                else:
+                    self.risk_score += 1
+                    
+                self.root.update_risk_score(self.risk_score)
+                self.root.add_log_message(message)
+                
+                if self.risk_score > 15:
+                    self.root.add_log_message("!!! CRITICAL RISK LEVEL - POTENTIAL SECURITY BREACH !!!")
+                    self.risk_score = 0
+        except queue.Empty:
+            pass
+        if not self.stop_event or not self.stop_event.is_set():
+            self.root.after(100, self.process_queue)
 
 if __name__ == "__main__":
-    print("Starting Guardio...")
-
-    anomaly_queue = queue.Queue()
-    risk_score = 0
-
-    movement_agent = MovementAgent(anomaly_queue=anomaly_queue)
-    typing_agent = TypingAgent(anomaly_queue=anomaly_queue)
-    app_usage_agent = AppUsageAgent(anomaly_queue=anomaly_queue)
-
-    movement_thread = threading.Thread(target=movement_agent.run, daemon=True)
-    typing_thread = threading.Thread(target=typing_agent.run, daemon=True)
-    app_thread = threading.Thread(target=app_usage_agent.run, daemon=True)
-    
-    movement_thread.start()
-    typing_thread.start()
-    app_thread.start()
-
-    print("\nGuardio is running. All agents active.")
-    print("Please use your computer normally for 30 seconds for baseline learning.")
-
-    while True:
-        try:
-            anomaly_report = anomaly_queue.get() 
-            print(anomaly_report)
-            
-            if "Movement" in anomaly_report:
-                risk_score += 1
-            elif "Typing" in anomaly_report:
-                risk_score += 2
-            elif "AppUsage" in anomaly_report:
-                risk_score += 3
-            
-            print(f"--> Current Risk Score: {risk_score}")
-
-            if risk_score > 10:
-                print("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                print("!!! HIGH RISK SCORE DETECTED - POTENTIAL FRAUD !!!")
-                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
-                risk_score = 0
-
-        except KeyboardInterrupt:
-            print("\nStopping Guardio. All threads will now exit.")
-            break
-        except Exception as e:
-            print(f"An unexpected error occurred in the main loop: {e}")
-            break
+    dashboard = GuardioDashboard()
+    app = GuardioApp(dashboard)
+    dashboard.mainloop()

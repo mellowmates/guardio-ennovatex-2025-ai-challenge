@@ -1,4 +1,0 @@
-pynput
-psutil
-scikit-learn
-numpy

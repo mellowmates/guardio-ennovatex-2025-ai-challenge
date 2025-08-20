@@ -1,0 +1,11 @@
+# requirements.txt
+
+# For Streamlit Dashboard
+streamlit
+pandas
+numpy
+plotly
+
+# For Agents
+pynput
+psutil
