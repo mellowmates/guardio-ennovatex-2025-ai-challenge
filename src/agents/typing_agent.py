@@ -1,45 +1,133 @@
-# src/agents/typing_agent.py
 import time
-import numpy as np
 from pynput import keyboard
 
 class TypingAgent:
-    def __init__(self, anomaly_queue):
+    def __init__(self, anomaly_queue, stats_queue, alpha=0.01, sigma=3.0, cooldown=3.0):
         self.anomaly_queue = anomaly_queue
-        self.key_press_times = []
-        self.last_press_time = time.time()
-        self.is_learning = True
-        self.learned_profile = {"mean_delay": 0, "std_dev_delay": 0}
+        self.stats_queue = stats_queue
+
+        self.last_ts = time.time()
+        self.alpha = alpha
+        self.sigma = sigma
+        self.cooldown = cooldown
+
+        self.mean_delay = None
+        self.var_delay = None
+        self.count = 0
+
+        self._last_alert_ts = 0.0
+        self._last_stat_ts = 0.0
+
+        self.total_chars = 0
+        self.start_time = time.time()
+        self.last_activity_time = time.time()
+        self.wpm_samples = []
+        self.typing_speed_wpm = 0
+        self.window_size = 60  # 60 second window for WPM
+        self.char_timestamps = []
+
         self.listener = keyboard.Listener(on_press=self._on_press)
 
+    def _calculate_wpm(self):
+        """Calculate current typing speed in Words Per Minute using a sliding window"""
+        now = time.time()
+        
+        # Remove timestamps older than window_size
+        while self.char_timestamps and (now - self.char_timestamps[0]) > self.window_size:
+            self.char_timestamps.pop(0)
+        
+        # If no recent activity (>5 seconds gap), return 0
+        if not self.char_timestamps or (now - self.char_timestamps[-1]) > 5:
+            return 0
+            
+        # Calculate WPM based on characters in the window
+        chars_in_window = len(self.char_timestamps)
+        window_duration = min(self.window_size, now - self.char_timestamps[0]) / 60
+        
+        if window_duration > 0:
+            wpm = (chars_in_window / 5) / window_duration
+            return wpm
+        return 0
+
+    def _update_wpm(self):
+        """Update WPM with exponential moving average"""
+        current_wpm = self._calculate_wpm()
+        self.wpm_samples.append(current_wpm)
+        
+        if len(self.wpm_samples) > 5:
+            self.wpm_samples.pop(0)
+        
+        # Use exponential weights for moving average
+        weights = [0.1, 0.15, 0.2, 0.25, 0.3][:len(self.wpm_samples)]
+        total_weight = sum(weights)
+        
+        self.typing_speed_wpm = sum(w * s for w, s in zip(weights, self.wpm_samples)) / total_weight
+
+    def _now(self):
+        return time.time()
+
+    def _std(self):
+        return (self.var_delay ** 0.5) if self.var_delay is not None else 0.0
+
+    def _update_profile(self, value):
+        if self.mean_delay is None:
+            self.mean_delay = value
+            self.var_delay = 0.0
+            self.count = 1
+        else:
+            self.count += 1
+            delta = value - self.mean_delay
+            self.mean_delay += self.alpha * delta
+            self.var_delay = (1 - self.alpha) * self.var_delay + self.alpha * (delta ** 2)
+
+    def _publish_stats(self, z=None, note=None):
+        now = self._now()
+        if now - self._last_stat_ts >= 0.5:
+            self._last_stat_ts = now
+            mean = self.mean_delay if self.mean_delay is not None else None
+            std = self._std() if self.mean_delay is not None else None
+            self.stats_queue.put({
+                "source": "Typing",
+                "mean": mean,
+                "std": std,
+                "z": z,
+                "note": note or ("Adapting" if self.count < 30 else "Stable"),
+                "wpm": self.typing_speed_wpm
+            })
+
     def _on_press(self, key):
-        current_time = time.time()
-        delay = current_time - self.last_press_time
-        self.last_press_time = current_time
-        if 0.01 < delay < 2.0: self.key_press_times.append(delay)
-        if len(self.key_press_times) > 500: self.key_press_times.pop(0)
-        if not self.is_learning: self._detect_anomaly(delay)
+        now = self._now()
+        delay = now - self.last_ts
+        self.last_ts = now
 
-    def _learn_profile(self):
-        print("[TypingAgent] Learning normal typing rhythm for 90 seconds...")
-        time.sleep(90) # <-- UPDATED
-        if len(self.key_press_times) > 10:
-            self.learned_profile["mean_delay"] = np.mean(self.key_press_times)
-            self.learned_profile["std_dev_delay"] = np.std(self.key_press_times)
-        self.is_learning = False
-        self.key_press_times = []
+        # Count any printable character including space and punctuation
+        if hasattr(key, 'char') and key.char is not None:
+            self.total_chars += 1
+            self.char_timestamps.append(now)
+            self._update_wpm()
 
-    def _detect_anomaly(self, current_delay):
-        if self.learned_profile["std_dev_delay"] == 0: return
-        mean, std_dev = self.learned_profile["mean_delay"], self.learned_profile["std_dev_delay"]
-        if abs(current_delay - mean) > 3 * std_dev:
-            self.anomaly_queue.put(f"[ALERT] Typing Anomaly: Unusual typing rhythm detected.")
+        if 0.01 < delay < 2.0:
+            z = None
+            if self.mean_delay is not None and self._std() > 1e-6 and self.count > 10:
+                z = abs(delay - self.mean_delay) / max(self._std(), 1e-6)
+                if z > self.sigma:
+                    if now - self._last_alert_ts >= self.cooldown:
+                        self._last_alert_ts = now
+                        sev = "High" if z > (self.sigma + 2.0) else "Medium"
+                        self.anomaly_queue.put({
+                            "source": "Typing",
+                            "severity": sev,
+                            "message": f"Delay {delay*1000:.0f}ms, z={z:.2f}"
+                        })
+
+            self._update_profile(delay)
+            self._publish_stats(z=z)
+        else:
+            self._publish_stats(z=None, note="NoSignal")
 
     def run(self, stop_event):
         self.listener.start()
-        self._learn_profile()
-        print(f"[{self.__class__.__name__}] Now monitoring...")
+        self._publish_stats(z=None, note="Adapting")
         while not stop_event.is_set():
-            time.sleep(0.5)
+            time.sleep(0.05)
         self.listener.stop()
-        print(f"[{self.__class__.__name__}] has stopped.")

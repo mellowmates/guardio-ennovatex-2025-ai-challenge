@@ -1,4 +1,4 @@
-# src/__init__.py
+
 """
 Guardio - On-Device Multi-Agent Anomaly Detection System
 
@@ -9,7 +9,6 @@ For the Samsung EnnovateX 2025 AI Challenge.
 """
 
 __version__ = "1.0.0"
-__author__ = "Dev Dream Team" # <<-- IMPORTANT: Change to your team name
+__author__ = "Dev Dream Team" 
 
-# This file acts as the package for the 'src' directory
-# No direct imports needed here for this project structure, but its presence is crucial.
+
