@@ -95,7 +95,10 @@ source venv/bin/activate
 # On Windows:
 venv\Scripts\activate
 
-# Install dependencies
+# Install dependencies from requirements.txt
+pip install -r requirements.txt
+
+# Or install dependencies manually if needed
 pip install customtkinter pynput numpy psutil
 
 # Run Guardio
