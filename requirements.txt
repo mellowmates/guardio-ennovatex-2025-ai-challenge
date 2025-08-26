@@ -1,11 +1,14 @@
-# requirements.txt
+# Guardio - Samsung EnnovateX 2025
+# Team Dev Dream Team
 
-# For Streamlit Dashboard
-streamlit
-pandas
-numpy
-plotly
+# Core UI framework
+customtkinter
 
-# For Agents
+# Input monitoring
 pynput
+
+# Numerical computations
+numpy
+
+# System utilities
 psutil
