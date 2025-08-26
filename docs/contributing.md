@@ -124,7 +124,7 @@ def update_risk_score(self, risk_score: int) -> None:
 ### 2. Development Workflow
 ```bash
 # Keep your fork updated
-git remote add upstream https://github.com/devdreamteam/Guardio.git
+git remote add upstream https://github.com/mellowmates/Guardio.git
 git fetch upstream
 git checkout main
 git merge upstream/main

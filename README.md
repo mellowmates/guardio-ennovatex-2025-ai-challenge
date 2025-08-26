@@ -302,7 +302,7 @@ Guardio is designed with privacy as a core principle. All behavioral analysis oc
 ### Links
 
 - 📧 **Email**: omprakash11273@gmail.com
-- 🐙 **GitHub**: [github.com/devdreamteam/guardio](https://github.com/devdreamteam/guardio)
+- 🐙 **GitHub**: [github.com/mellowmates/guardio](https://github.com/mellowmates/guardio)
 - 🎬 **Demo Video**: [Watch Demo](https://ennovatex.io/demo)
 - 🏆 **Samsung EnnovateX**: [ennovatex.io](https://ennovatex.io)
 

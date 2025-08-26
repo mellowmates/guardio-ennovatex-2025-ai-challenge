@@ -20,4 +20,4 @@ Welcome to the Guardio documentation! This repository contains comprehensive tec
 
 Built with ❤️ for Samsung EnnovateX 2025
 
-Repository: [https://github.com/devdreamteam/Guardio](https://github.com/devdreamteam/Guardio)
+Repository: [https://github.com/mellowmates/Guardio](https://github.com/mellowmates/Guardio)

@@ -64,7 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Contributing guidelines for future development
 
 ### Repository
-- **GitHub**: [https://github.com/devdreamteam/Guardio](https://github.com/devdreamteam/Guardio)
+- **GitHub**: [https://github.com/mellowmates/Guardio](https://github.com/mellowmates/Guardio)
 - **License**: MIT License for open-source collaboration
 - **Platform**: Samsung EnnovateX 2025 AI Challenge submission
 
