@@ -1,5 +1,40 @@
+# Samsung EnnovateX 2025 AI Challenge Submission
 
-# Guardio - Adaptive Behavioral Anomaly Detection
+- **Problem Statement** — On-Device Multi-Agent System for Behavior-Based Anomaly & Fraud Detection: 
+Multi-agent system that runs fully on-device, continuously learning and modeling user behaviour patterns to detect anomalies or potential fraud in real-time, without sending sensitive data to external servers. The system can monitor user behaviour patterns (e.g., touch patterns, typing rhythm, app usage, movement) and build local models of “normal” behaviour. It should detect and react to anomalous or suspicious activity (e.g., unauthorized access, bot-like behaviour, spoofing).
+- **Team name** — Dev Dream Team
+- **Team members (Names)** — Omprakash Panda, Sindhu B L, Vittal G B, Vishwajith Chakravarthy
+- **Demo Video Link** — https://www.youtube.com/watch?v=YOUR_VIDEO_ID 
+
+---
+
+## Project Artefacts
+
+- **Technical Documentation** — [docs/](./docs)  
+  All technical details are written in Markdown inside the docs folder (architecture, agent designs, anomaly logic, setup, troubleshooting).
+
+- **Source Code** — [src/](./src)  
+  Fully runnable code with clear entry points (e.g., `src/main.py`), platform notes, and virtual environment setup.
+
+- **Models Used** — N/A  
+  Guardio currently uses statistical and behavioral methods (rolling windows, EMA, z-scores) and does not rely on external ML models.
+
+- **Models Published** — N/A
+
+- **Datasets Used** — N/A  
+  Guardio learns on-device from live behavioral signals and does not ship datasets.
+
+- **Datasets Published** — N/A
+
+---
+
+## Attribution
+
+This solution is original to Dev Dream Team and built from scratch for Samsung EnnovateX 2025. If any open-source components or prior work are incorporated later, links and contributions will be attributed explicitly here.
+
+---
+
+# Guardio — Adaptive Behavioral Anomaly Detection
 
 <div align="center">
 
@@ -8,318 +43,212 @@
 [![Samsung EnnovateX 2025](https://img.shields.io/badge/Samsung-EnnovateX%202025-1F6FEB?style=for-the-badge&logo=samsung&logoColor=white)](https://ennovatex.io)
 [![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![CustomTkinter](https://img.shields.io/badge/UI-CustomTkinter-FF6B35?style=for-the-badge)](https://customtkinter.tomschimansky.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-success?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-success?style=for-the-badge)](./LICENSE)
 
-**An intelligent, privacy-first anomaly detection system that learns your unique behavioral patterns to identify potential security threats in real-time.**
+**An intelligent, privacy‑first anomaly detection system that learns unique behavioral patterns to identify potential security threats in real time.**
 
-[🎬 View Demo](#-demo-video) • [🚀 Quick Start](#-quick-start) • [📖 Documentation](#-how-it-works) • [🤝 Contributing](#-contributing)
+[🎬 Demo Video](#demo-video) • [🚀 Quick Start](#quick-start) • [📖 Documentation](#how-it-works) • [🧱 Architecture](#technical-architecture)
 
 </div>
 
 ---
 
-## 🎯 Built for Samsung EnnovateX 2025 AI Challenge
+## Built for Samsung EnnovateX 2025 AI Challenge
 
-Guardio revolutionizes cybersecurity by implementing **adaptive machine learning** that continuously learns individual user behavior patterns. Unlike traditional rule-based security systems, Guardio evolves with users while detecting sophisticated attacks and unauthorized access attempts.
+Guardio implements adaptive, on-device behavioral security. It learns normal user activity and flags unusual patterns while preserving privacy through local processing.
 
-### 🔍 The Problem
+### The Problem
+- Massive financial loss from evolving threats and unauthorized access
+- Static, rule-based systems fail to adapt to changing behaviors
+- Privacy concerns with cloud-based behavioral analytics
 
-- **$5 trillion** in annual fraud losses globally
-- Traditional security relies on **static rules** that attackers can bypass
-- Current systems can't **adapt** to evolving attack patterns
-- **Privacy concerns** with cloud-based behavioral analysis
-
-### 💡 Our Solution
-
-Guardio provides **on-device, adaptive anomaly detection** that:
-- ✅ Learns your unique behavioral patterns continuously
-- ✅ Detects subtle deviations in real-time
-- ✅ Protects privacy with local processing
-- ✅ Adapts to natural behavioral changes
+### Our Solution
+- On-device, adaptive anomaly detection that:
+  - Learns personal baselines continuously
+  - Detects subtle deviations in real time
+  - Preserves privacy with local-only processing
+  - Adapts thresholds to real-world behavior change
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-### 🧠 **Adaptive Intelligence**
-- **Continuous Learning**: Exponential moving averages adapt to behavioral changes
-- **Multi-Modal Analysis**: Typing patterns, mouse movement, and app usage
-- **Statistical Detection**: Z-score based anomaly identification with configurable thresholds
+### 🧠 Adaptive Intelligence
+- Rolling statistics and exponential moving averages
+- Multi-agent behavioral analysis (typing, movement, app usage)
+- Z-score–based anomaly detection with configurable thresholds
 
-### 🔒 **Privacy-First Design**
-- **Local Processing**: All analysis happens on your device
-- **No Data Transmission**: Your behavioral data never leaves your computer
-- **Zero Cloud Dependency**: Complete offline operation
+### 🔒 Privacy-First
+- 100% on-device processing
+- No data transmission
+- Works offline; zero cloud dependency
 
-### 🎛️ **Professional Controls**
-- **Live Sensitivity Adjustment**: Real-time threshold tuning (1.0σ to 6.0σ)
-- **Alert Cooldown Management**: Prevent notification spam (0-10 seconds)
-- **Enterprise Dashboard**: Samsung One UI-inspired interface
+### 🎛️ Professional Controls
+- Live sensitivity tuning (1.0σ–6.0σ)
+- Alert cooldown management (0–10s)
+- One UI–inspired dashboard for clarity
 
-### 📊 **Real-Time Monitoring**
-- **Risk Score Tracking**: Dynamic security level assessment
-- **Typing Speed Analysis**: Live WPM monitoring with performance categorization
-- **Agent Status Display**: Transparent system operation visibility
-
----
-
-## 🎬 Demo Video
-
-> [🔗 Watch Live Demo](https://ennovatex.io/demo)
->
-> *See Guardio detecting real-time anomalies and adapting to user behavior in real-time*
+### 📊 Real-Time Monitoring
+- Risk score visualization
+- Live WPM (typing) analysis and rhythm detection
+- Transparent agent status and event log
 
 ---
 
-## 🚀 Quick Start
+## Demo Video
+
+- ▶️ **YouTube (Unlisted/Public)**: https://www.youtube.com/watch?v=YOUR_VIDEO_ID  
+  A short walkthrough showing real-time detection and controls.
+
+---
+
+## Quick Start
 
 ### Prerequisites
+- Python 3.8+ (Windows/macOS/Linux)
+- pip
 
-- **Python 3.8+** installed on your system
-- **pip** package manager
-- **Linux/Windows/macOS** (cross-platform compatible)
+### Setup
 
-### Installation
+```
+git clone https://github.com/mellowmates/guardio-ennovatex-2025-ai-challenge.git
+cd ennovatex-2025-ai-challenge-guardio
 
-```bash
-git clone https://github.com/mellowmates/guardio.git
-cd guardio
-
-# Create virtual environment
+# Create and activate virtual environment
 python -m venv venv
-
-# Activate virtual environment
-# On Linux/macOS:
+# Linux/macOS
 source venv/bin/activate
-
-# On Windows:
+# Windows
 venv\Scripts\activate
 
-# Install dependencies from requirements.txt
+# Install dependencies
 pip install -r requirements.txt
 
-# Or install dependencies manually if needed
-pip install customtkinter pynput numpy psutil
-
-# Run Guardio
+# Run
 python src/main.py
 ```
 
 ### First Launch
-
-1. **Start Monitoring**: Click "START MONITORING" to begin behavioral learning
-2. **Adjust Sensitivity**: Use the slider to set detection threshold (3.0σ recommended)
-3. **Set Cooldown**: Configure alert frequency limit (3.0s recommended)
-4. **Monitor Activity**: Watch real-time anomaly detection in the activity log
-
----
-
-## 🛡️ How It Works
-
-### Behavioral Analysis Engines
-
-| Agent | Analysis Type | Detection Method |
-|-------|---------------|------------------|
-| **Movement Agent** | Mouse movement patterns | Velocity and acceleration deviation |
-| **Typing Agent** | Keystroke dynamics | Inter-key timing rhythm analysis |
-| **AppUsage Agent** | Application behavior | Focus switching and usage patterns |
-
-### Adaptive Learning Process
-
-1. **Profile Initialization**: System learns baseline behavior patterns
-2. **Continuous Adaptation**: Exponential moving averages update profiles
-3. **Anomaly Detection**: Z-score analysis identifies deviations
-4. **Intelligent Alerting**: Configurable thresholds minimize false positives
+1. Click “START MONITORING” to begin learning baselines.  
+2. Set detection sensitivity (recommended: 3.0σ).  
+3. Configure alert cooldown (recommended: 3 seconds).  
+4. Observe live events and anomaly flags in the activity panel.
 
 ---
 
-## 🏗️ Technical Architecture
+## How It Works
 
-### Core Technologies
+### Behavioral Agents
 
-- **Language**: Python 3.8+
-- **UI Framework**: CustomTkinter (Samsung One UI design)
-- **ML Approach**: Real-time statistical analysis with exponential moving averages
-- **Threading**: Multi-agent concurrent processing
-- **Privacy**: On-device processing, zero external communication
+| Agent | Signals | Detection Method |
+|------|---------|------------------|
+| MovementAgent | Mouse velocity/acceleration | Deviation from rolling baseline |
+| TypingAgent | WPM + inter-key rhythm | Z-score and rhythm anomalies |
+| AppUsageAgent | Focus/app switching | Unusual transition patterns |
+
+### Adaptive Learning
+1. Baseline learning from recent activity (rolling windows).  
+2. EMA adapts to gradual behavior changes.  
+3. Latest measurement evaluated via z-score relative to baseline.  
+4. Alerts are gated by a cooldown to prevent spam.
+
+---
+
+## Technical Architecture
+
+- **Language**: Python 3.8+  
+- **UI**: CustomTkinter (One UI–inspired)  
+- **Concurrency**: Multi-threaded agents  
+- **Detection**: Rolling mean/std, EMA, z-scores  
+- **Privacy**: Local-only processing
 
 ### System Requirements
 
 | Component | Minimum | Recommended |
-|-----------|---------|-------------|
-| **Python** | 3.8 | 3.10+ |
-| **RAM** | 2GB | 4GB+ |
-| **Storage** | 100MB | 500MB |
-| **OS** | Windows 10/macOS 10.14/Ubuntu 18.04 | Latest versions |
+|---|---|---|
+| Python | 3.8 | 3.10+ |
+| RAM | 2 GB | 4 GB+ |
+| Storage | 100 MB | 500 MB |
 
 ---
 
-## 🎯 Market Impact & Applications
+## Configuration
 
-### Target Markets
-
-- **Enterprise Security**: Protect corporate workstations from insider threats
-- **Remote Work Monitoring**: Ensure secure home office environments  
-- **Elder Care Technology**: Detect health emergencies through behavior changes
-- **Personal Privacy**: Secure personal devices from unauthorized access
-
-### Competitive Advantages
-
-| Feature | Traditional Systems | Guardio |
-|---------|-------------------|---------|
-| **Adaptation** | Static rules | Continuous learning |
-| **Privacy** | Cloud processing | Local only |
-| **Customization** | Fixed thresholds | Live adjustment |
-| **User Experience** | Complex setup | One-click operation |
-
----
-
-## 🔧 Configuration
-
-### Sensitivity Settings
-
-```python
-# Sensitivity levels (standard deviations)
-VERY_SENSITIVE = 1.0  # Detects minor deviations
-BALANCED = 3.0        # Recommended default
-RELAXED = 6.0         # Only major anomalies
 ```
+# Sensitivity (σ)
+VERY_SENSITIVE = 1.0
+BALANCED = 3.0   # Recommended
+RELAXED = 6.0
 
-### Alert Cooldown
-
-
-```python
-# Cooldown periods (seconds)
-IMMEDIATE = 0.0       # No cooldown
-BALANCED = 3.0        # Recommended default
-MINIMAL_ALERTS = 10.0 # Maximum spacing
+# Alert cooldown (seconds)
+IMMEDIATE = 0.0
+DEFAULT = 3.0
+QUIET = 10.0
 ```
 
 ---
 
-## 📈 Performance Metrics
+## Performance
 
-### Detection Accuracy
-- **True Positive Rate**: >95% for significant behavioral deviations
-- **False Positive Rate**: <2% with optimized thresholds
-- **Adaptation Time**: <30 behavioral samples for profile stability
-
-### System Performance
-- **CPU Usage**: <5% average system load
-- **Memory Footprint**: <50MB RAM consumption
-- **Response Time**: <100ms anomaly detection latency
+- High accuracy on significant deviations with tuned thresholds  
+- Low CPU and memory footprint (lightweight, thread-based)  
+- Sub-100ms detection latency in typical scenarios
 
 ---
 
-## 🤝 Contributing
+## Repository Structure
 
-We welcome contributions to Guardio! Here's how you can help:
+```
+.
+├─ docs/                                # Technical documentation (Markdown)
+│  ├─ images/
+│  │  └─ ui-screenshots/
+│  │     ├─ UI.png
+│  │     └─ working.png
+│  ├─ algorithms.md
+│  ├─ api-reference.md
+│  ├─ architecture.md
+│  ├─ changelog.md
+│  ├─ contributing.md
+│  ├─ index.md
+│  ├─ installation.md
+│  └─ user-manual.md
+├─ src/                                 # Application source code
+│  ├─ agents/
+│  │  ├─ __init__.py
+│  │  ├─ app_usage_agent.py
+│  │  ├─ movement_agent.py
+│  │  └─ typing_agent.py
+│  ├─ __init__.py
+│  ├─ dashboard.py
+│  └─ main.py
+├─ .gitignore
+├─ LICENSE
+├─ README.md
+└─ requirements.txt
 
-### Development Setup
-
-```bash
-# Fork the repository
-
-# Clone your fork
-git clone https://github.com/mellowmates/guardio.git
-
-# Create feature branch
-git checkout -b feature/amazing-feature
-
-# Make changes and test
-python -m pytest tests/
-
-# Commit and push
-git commit -m "Add amazing feature"
-git push origin feature/amazing-feature
-
-# Open Pull Request
 ```
 
-### Areas for Contribution
+---
 
-- 🔧 **New Detection Agents**: Add biometric sensors, network analysis
-- 🎨 **UI Enhancements**: Improve dashboard design and user experience
-- 📊 **Analytics Features**: Advanced reporting and trend analysis
-- 🧪 **Testing**: Expand test coverage and edge case handling
-- 📚 **Documentation**: Improve guides and API documentation
+## License
+
+This project is released under the **MIT License**. See [LICENSE](./LICENSE) for details.
 
 ---
 
-## 🏆 Samsung EnnovateX 2025 Submission
+## Contact
 
-### Innovation Highlights
-
-1. **Adaptive AI**: Novel approach to behavioral anomaly detection
-2. **Privacy Engineering**: Complete on-device processing architecture
-3. **User Experience**: Professional Samsung One UI design implementation
-4. **Real-World Impact**: Addresses $5T global fraud problem
-
-### Technical Excellence
-
-- ✅ **Working MVP**: Fully functional end-to-end system
-- ✅ **Scalable Architecture**: Multi-threaded, extensible design
-- ✅ **Professional UI**: Samsung design language implementation
-- ✅ **Privacy Compliance**: GDPR-ready local processing
-
----
-
-## 📄 License & Legal
-
-### MIT License
-
-Copyright (c) 2025 Guardio Team
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-
-### Privacy Statement
-
-Guardio is designed with privacy as a core principle. All behavioral analysis occurs locally on your device. No personal data, behavioral patterns, or usage information is transmitted to external servers or third parties.
-
----
-
-## 📞 Contact & Support
-
-### Team
-
-### Development Team
-
-- **[Omprakash Panda]** - AI/ML Development & Project Lead
-- **[Sindhu B L]** - UI Development & Design  
-- **[Vittal G B]** - Backend Integration & Threading
-- **[Vishwajith Chakravarthy]** - Testing, Documentation & Presentation
-
-
-### Links
-
-- 📧 **Email**: omprakash11273@gmail.com
-- 🐙 **GitHub**: [github.com/mellowmates/guardio](https://github.com/mellowmates/guardio)
-- 🎬 **Demo Video**: [Watch Demo](https://ennovatex.io/demo)
-- 🏆 **Samsung EnnovateX**: [ennovatex.io](https://ennovatex.io)
+- Team: Dev Dream Team  
+- Members: Omprakash Panda, Sindhu B L, Vittal G B, Vishwajith Chakravarthy  
+- Email: omprakash11273@gmail.com  
+- GitHub: https://github.com/mellowmates/guardio-ennovatex-2025-ai-challenge
 
 ---
 
 <div align="center">
 
-**Built with ❤️ for Samsung EnnovateX 2025**
-
-*Securing the future with adaptive AI and privacy-first innovation*
-
-⭐ **Star this repository if Guardio helped secure your digital life!** ⭐
+Built for Samsung EnnovateX 2025 • Privacy-first adaptive security
 
 </div>
 ```
-
-
