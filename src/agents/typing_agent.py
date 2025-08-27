@@ -5,42 +5,33 @@ class TypingAgent:
     def __init__(self, anomaly_queue, stats_queue, alpha=0.01, sigma=3.0, cooldown=3.0):
         self.anomaly_queue = anomaly_queue
         self.stats_queue = stats_queue
-
         self.last_ts = time.time()
         self.alpha = alpha
         self.sigma = sigma
         self.cooldown = cooldown
-
         self.mean_delay = None
         self.var_delay = None
         self.count = 0
-
         self._last_alert_ts = 0.0
         self._last_stat_ts = 0.0
-
         self.total_chars = 0
         self.start_time = time.time()
         self.last_activity_time = time.time()
         self.wpm_samples = []
         self.typing_speed_wpm = 0
-        self.window_size = 60  # 60 second window for WPM
+        self.window_size = 60
         self.char_timestamps = []
-
         self.listener = keyboard.Listener(on_press=self._on_press)
 
     def _calculate_wpm(self):
-        """Calculate current typing speed in Words Per Minute using a sliding window"""
         now = time.time()
         
-        # Remove timestamps older than window_size
         while self.char_timestamps and (now - self.char_timestamps[0]) > self.window_size:
             self.char_timestamps.pop(0)
         
-        # If no recent activity (>5 seconds gap), return 0
         if not self.char_timestamps or (now - self.char_timestamps[-1]) > 5:
             return 0
             
-        # Calculate WPM based on characters in the window
         chars_in_window = len(self.char_timestamps)
         window_duration = min(self.window_size, now - self.char_timestamps[0]) / 60
         
@@ -50,14 +41,12 @@ class TypingAgent:
         return 0
 
     def _update_wpm(self):
-        """Update WPM with exponential moving average"""
         current_wpm = self._calculate_wpm()
         self.wpm_samples.append(current_wpm)
         
         if len(self.wpm_samples) > 5:
             self.wpm_samples.pop(0)
         
-        # Use exponential weights for moving average
         weights = [0.1, 0.15, 0.2, 0.25, 0.3][:len(self.wpm_samples)]
         total_weight = sum(weights)
         
@@ -100,11 +89,19 @@ class TypingAgent:
         delay = now - self.last_ts
         self.last_ts = now
 
-        # Count any printable character including space and punctuation
         if hasattr(key, 'char') and key.char is not None:
             self.total_chars += 1
             self.char_timestamps.append(now)
             self._update_wpm()
+
+        if self.typing_speed_wpm > 80:
+            if now - self._last_alert_ts >= self.cooldown:
+                self._last_alert_ts = now
+                self.anomaly_queue.put({
+                    "source": "Typing",
+                    "severity": "High",
+                    "message": f"Unusual Speed Detected: {self.typing_speed_wpm:.0f} WPM"
+                })
 
         if 0.01 < delay < 2.0:
             z = None
