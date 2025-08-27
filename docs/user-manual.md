@@ -115,4 +115,4 @@ For technical support or questions:
 
 **UI Design by Sindhu B L**  
 **Dev Dream Team - Samsung EnnovateX 2025**
-```
+
