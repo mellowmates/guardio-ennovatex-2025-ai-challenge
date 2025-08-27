@@ -251,4 +251,3 @@ This project is released under the **MIT License**. See [LICENSE](./LICENSE) for
 Built for Samsung EnnovateX 2025 • Privacy-first adaptive security
 
 </div>
-```
