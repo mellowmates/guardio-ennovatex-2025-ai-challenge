@@ -97,7 +97,7 @@ Guardio implements adaptive, on-device behavioral security. It learns normal use
 
 ## Demo Video
 
-- ▶️ **YouTube (Unlisted/Public)**: https://www.youtube.com/watch?v=YOUR_VIDEO_ID  
+- ▶️ **YouTube (Unlisted/Public)**: [Youtube](https://youtu.be/kQXd9r5204I)  
   A short walkthrough showing real-time detection and controls.
 
 ---
